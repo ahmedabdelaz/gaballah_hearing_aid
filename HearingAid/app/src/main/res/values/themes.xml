@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark theme for the hearing aid app -->
+    <style name="Theme.HearingAid" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">#00897B</item>
+        <item name="colorPrimaryVariant">#00695C</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorSecondary">#00E5FF</item>
+        <item name="colorOnSecondary">#000000</item>
+        <item name="android:colorBackground">#0D0D1A</item>
+        <item name="colorSurface">#1A1A2E</item>
+        <item name="colorOnSurface">#E0E0FF</item>
+        <item name="android:statusBarColor">#0D0D1A</item>
+        <item name="android:navigationBarColor">#0D0D1A</item>
+    </style>
+</resources>

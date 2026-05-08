@@ -1,0 +1,27 @@
+// ============================================================
+// Root build.gradle
+// Project-level Gradle config — applies to ALL sub-modules
+// ============================================================
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        // Android Gradle Plugin (AGP) — drives aapt2, dex, signing, etc.
+        classpath 'com.android.tools.build:gradle:8.3.2'
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        // MPAndroidChart is hosted on JitPack
+        maven { url 'https://jitpack.io' }
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

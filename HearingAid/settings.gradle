@@ -1,0 +1,3 @@
+// settings.gradle — tells Gradle which modules to include
+rootProject.name = "HearingAid"
+include ':app'

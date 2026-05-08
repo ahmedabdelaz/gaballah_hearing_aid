@@ -1,0 +1,91 @@
+// ============================================================
+// app/build.gradle
+// Module-level build config for the :app module
+// ============================================================
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.hearingaid.app'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.hearingaid.app"
+        minSdk 26                 // Android 8.0 — AAUDIO low-latency API
+        targetSdk 34
+        versionCode 1
+        versionName "1.0.0"
+
+        // NDK config — we use AAudio via JNI for <10 ms latency
+        externalNativeBuild {
+            cmake {
+                cppFlags "-std=c++17 -O3 -ffast-math"
+                arguments "-DANDROID_STL=c++_shared",
+                          "-DANDROID_ARM_NEON=TRUE"    // NEON SIMD for EQ math
+            }
+        }
+        ndk {
+            // Build for all modern ABI targets
+            abiFilters 'arm64-v8a', 'armeabi-v7a', 'x86_64'
+        }
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    // Link the CMakeLists.txt that compiles our C++ audio engine
+    externalNativeBuild {
+        cmake {
+            path "src/main/cpp/CMakeLists.txt"
+            version "3.22.1"
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false           // Keep false so the audio thread isn't GC-paused
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug  // For dev; replace with your keystore in prod
+        }
+        debug {
+            debuggable true
+        }
+    }
+
+    buildFeatures {
+        viewBinding true    // Null-safe view access without findViewById
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    // Package name conflict resolution
+    packagingOptions {
+        pickFirst 'lib/arm64-v8a/libc++_shared.so'
+        pickFirst 'lib/armeabi-v7a/libc++_shared.so'
+    }
+}
+
+dependencies {
+    // AndroidX core
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+
+    // Lifecycle — ViewModel keeps audio engine alive across rotation
+    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.8.3'
+    implementation 'androidx.lifecycle:lifecycle-livedata:2.8.3'
+    implementation 'androidx.lifecycle:lifecycle-runtime:2.8.3'
+
+    // Preferences — persists user's EQ graph across sessions
+    implementation 'androidx.preference:preference:1.2.1'
+
+    // Charts — draws the interactive frequency response graph
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+}
